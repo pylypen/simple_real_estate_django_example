@@ -152,12 +152,16 @@
               <h6 class="text-secondary">{{ listing.realtor.name }}</h6>
             </div>
           </div>
-          <button class="btn-primary btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Make An Inquiry</button>
+            {% if user.is_authenticated %}
+                <button class="btn-primary btn-block btn-lg" data-toggle="modal" data-target="#inquiryModal">Make An Inquiry</button>
+            {% else %}
+                <a class="btn-primary btn-block btn-lg text-center" href="{% url 'login' %}">Login for Make An Inquiry</a>
+            {% endif %}
         </div>
       </div>
     </div>
   </section>
-
+{% if user.is_authenticated %}
   <!-- Inquiry Modal -->
   <div class="modal fade" id="inquiryModal" role="dialog">
     <div class="modal-dialog">
@@ -169,14 +173,18 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <form action="{% url 'contact' %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="user_id" value="{{ user.id }}">
+              <input type="hidden" name="listing_id" value="{{ listing.id }}">
             <div class="form-group">
-              <label for="property_name" class="col-form-label">Property:</label>
-              <input type="text" name="listing" class="form-control" value="{{ listing.title }}" disabled>
+                <label for="property_name" class="col-form-label">Property:</label>
+                <input type="text" name="listing" class="form-control" value="{{ listing.title }}" disabled>
+                <input type="hidden" name="listing_title" class="form-control" value="{{ listing.title }}">
             </div>
             <div class="form-group">
               <label for="name" class="col-form-label">Name:</label>
-              <input type="text" name="name" class="form-control" required>
+              <input type="text" name="name" class="form-control" value="{{ user.first_name }}" required>
             </div>
             <div class="form-group">
               <label for="email" class="col-form-label">Email:</label>
@@ -197,4 +205,5 @@
       </div>
     </div>
   </div>
+{% endif %}
 {% endblock %}

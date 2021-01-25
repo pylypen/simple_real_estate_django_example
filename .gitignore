@@ -133,5 +133,5 @@ dmypy.json
 
 # project tmps dirs
 btre/media/
-btre/static
+btre/static/
 .idea
