@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  #Python Service
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/python/Dockerfile
+    container_name: btre_app_python
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./btre:/btre
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8080"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=homestead
+      - DB_USER=homestead
+      - DB_PASS=secret
+    depends_on:
+      - db
+
+  #Postgres Service
+  db:
+    image: postgres:12.5
+    container_name: btre_postgres
+    restart: unless-stopped
+    ports:
+      - "7770:5432"
+    environment:
+      POSTGRES_DB: homestead
+      POSTGRES_USER: homestead
+      POSTGRES_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: postgres
+    working_dir: /btre
+    volumes:
+      - ./btre:/btre
